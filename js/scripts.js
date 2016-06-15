@@ -1,98 +1,88 @@
 // BACKEND
 function Player() {
-
-}
-
-// player1 = [];
-// player2 = [];
-
-function Space(player) {
-  this.player = player;
   this.playerArray = [];
   this.firstCoord = [];
   this.secondCoord = [];
 }
-Space.prototype.turn = function(x) {
+
+Player.prototype.turn = function(x) {
   return this.playerArray.push(x);
 }
 
-
-// counter = 0;
-// for(i=0; i<.length(); i++ ) {
-//     if( s.charAt(i) == '$' ) {
-//         counter++;
-//     }
-// }
-// var firstCoord = [];
-// var secondCoord = [];
-// var arrayOfStrings = [];
-Space.prototype.slice = function(x) {
+Player.prototype.position = function(x, y) {
   var playerString = this.playerArray.join("");
   counter = 0;
   for (i=0; i<playerString.length; i++ ) {
-    if( playerString.charAt(i) == x ) {
-        counter++;
+    if(playerString.charAt(i) == x ) {
+      counter++;
       }
     if(counter === 3) {
-        alert("you win")
-      }
+      $("#board").show();
+      $("#cat").hide();
+      $(':button.gameButton').prop('disabled', true);
+      $(".turn").text("Player " + y + " wins");
+      return;
+    }
   }
 }
 
-//   for (i=0; i<this.playerArray.length; i++) {
-//     var playerString = splitString(this.playerArray,"");
-//     console.log(playerString);
-//   }
-// }
-
-
-
-
-    // function splitString(stringToSplit,separator){
-    //   var arrayOfStrings = stringToSplit.slice('');
-    //   console.log(arrayOfStrings);
-    // }
-    // var playerString = this.playerArray.split('');
-//     // console.log(playerSting);
-//     var first = this.playerArray.splice(0,1);
-//     return this.firstCoord.push(first);
-//     // return firstCoord.push(this.playerArray.slice(-1));
-//   }
-// }
-
-function Board() {
-
-}
-
-function Game() {
-
-}
-
-var play = function(val) {
-
+Player.prototype.cat = function() {
+  if (this.playerArray.length === 5) {
+    $(".turn").text("Cat's game");
+    $("#board").hide();
+    $("#cat").show();
+  }
 }
 
 // FRONTEND
 $(function(){
-  $("form#playerInput").submit(function(event) {
+  $("form#start").submit(function(event) {
     event.preventDefault();
-    var player = $("input:radio[name=player]:checked").val();
-    var newSpace = new Space(player);
-    newSpace.player = player;
-    console.log(newSpace.player);
+    var newPlayer1 = new Player();
+    var newPlayer2 = new Player();
+    $(':button#newGameButton').prop('disabled', true);
+    $(".turn").text("Player 1");
 
-  $("button").click(function() {
-    buttonValue = $(this).attr("value") || 0;
-    console.log(buttonValue);
-    newSpace.turn(buttonValue);
-    console.log(newSpace.playerArray);
-    newSpace.slice("A");
-    newSpace.slice("B");
-    newSpace.slice("C");
-    newSpace.slice("1");
-    newSpace.slice("2");
-    newSpace.slice("3");
-    console.log(newSpace.firstCoord);
+    $("button.gameButton").click(function() {
+      if ($("input:radio[name=player]:checked").val() === "1") {
+        $(".turn").text("Player 2");
+        this.disabled = true;
+        this.style.backgroundImage = "url('img/blue_x.png')";
+        var player = "1";
+        newPlayer1.player = player;
+        buttonValue = $(this).prop("value");
+        newPlayer1.turn(buttonValue);
+        newPlayer1.cat();
+        newPlayer1.position("A", "1");
+        newPlayer1.position("B", "1");
+        newPlayer1.position("C", "1");
+        newPlayer1.position("1", "1");
+        newPlayer1.position("2", "1");
+        newPlayer1.position("3", "1");
+        newPlayer1.position("*", "1");
+        newPlayer1.position("$", "1");
+        $('input[name="player"]').not(':checked').prop("checked",true);
+      } else {
+        $(".turn").text("Player 1");
+        this.disabled = true;
+        this.style.backgroundImage = "url('img/blue_o.png')";
+        var player = "2";
+        newPlayer2.player = player;
+        buttonValue = $(this).prop("value");
+        newPlayer2.turn(buttonValue);
+        newPlayer2.position("A", "2");
+        newPlayer2.position("B", "2");
+        newPlayer2.position("C", "2");
+        newPlayer2.position("1", "2");
+        newPlayer2.position("2", "2");
+        newPlayer2.position("3", "2");
+        newPlayer2.position("*", "2");
+        newPlayer2.position("$", "2");
+        $('input[name="player"]').not(':checked').prop("checked",true);
+      }
+    });
+    $("button#restartButton").click(function() {
+      location.reload();
     });
   });
 });
